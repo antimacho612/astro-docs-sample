@@ -1,0 +1,29 @@
+---
+import Navigation from "../components/Navigation.astro";
+import { SITE_TITLE, SITE_DESCRIPTION } from "../site_config";
+
+export interface Props {
+  /** Title of the page */
+  title?: string;
+  /** Description of the page */
+  description?: string;
+}
+
+const { title = SITE_TITLE, description = SITE_DESCRIPTION } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+  </head>
+
+  <body class="scroll-smooth dark:bg-zinc-900 dark:[color-scheme:dark]">
+    <Navigation />
+    <slot />
+  </body>
+</html>

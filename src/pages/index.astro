@@ -1,81 +1,68 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Card from '../components/Card.astro';
+import Layout from "../layouts/Base.astro";
 ---
 
-<Layout title="Welcome to Astro.">
-	<main>
-		<h1>Welcome to <span class="text-gradient">Astro</span></h1>
-		<p class="instructions">
-			To get started, open the directory <code>src/pages</code> in your project.<br />
-			<strong>Code Challenge:</strong> Tweak the "Welcome to Astro" message above.
-		</p>
-		<ul role="list" class="link-card-grid">
-			<Card
-				href="https://docs.astro.build/"
-				title="Documentation"
-				body="Learn how Astro works and explore the official API docs."
-			/>
-			<Card
-				href="https://astro.build/integrations/"
-				title="Integrations"
-				body="Supercharge your project with new frameworks and libraries."
-			/>
-			<Card
-				href="https://astro.build/themes/"
-				title="Themes"
-				body="Explore a galaxy of community-built starter themes."
-			/>
-			<Card
-				href="https://astro.build/chat/"
-				title="Community"
-				body="Come say hi to our amazing Discord community. ❤️"
-			/>
-		</ul>
-	</main>
+<Layout title="Astro Docs Sample">
+  <main>
+    <div class="bg-green-700 dark:bg-zinc-800">
+      <div class="mx-auto max-w-6xl p-8 text-center md:py-16">
+        <h1 class="mb-16 text-6xl font-bold text-white">Build Your Project!</h1>
+        <div class="space-y-8 dark:text-white md:flex md:justify-center md:gap-x-8 md:space-y-0">
+          <div>
+            <div class="rounded-2xl bg-zinc-100 p-8 shadow-xl dark:bg-zinc-900">
+              <h2 class="text-2xl font-bold">Card 1</h2>
+              <p class="my-4 text-gray-600 dark:text-gray-400">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed tincidunt, nisl eget aliquam tincidunt,
+                nisl elit aliquam tortor, eget aliquam nisl elit non nisl.
+              </p>
+              <a
+                href="/docs/get-started/introduction"
+                class="inline-block rounded bg-green-700 px-4 py-2 text-lg font-bold text-white hover:bg-green-800"
+              >
+                LEARN
+              </a>
+            </div>
+          </div>
+          <div>
+            <div class="rounded-2xl bg-zinc-100 p-8 shadow-xl dark:bg-zinc-900">
+              <h2 class="text-2xl font-bold">Card 2</h2>
+              <p class="my-4 text-gray-600 dark:text-gray-400">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed tincidunt, nisl eget aliquam tincidunt,
+                nisl elit aliquam tortor, eget aliquam nisl elit non nisl.
+              </p>
+              <a
+                href="/docs/guides/migrate-from-z"
+                class="inline-block rounded bg-green-700 px-4 py-2 text-lg font-bold text-white hover:bg-green-800"
+              >
+                MIGRATE
+              </a>
+            </div>
+          </div>
+          <div>
+            <div class="rounded-2xl bg-zinc-100 p-8 shadow-xl dark:bg-zinc-900">
+              <h2 class="text-2xl font-bold">Card 3</h2>
+              <p class="my-4 text-gray-600 dark:text-gray-400">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed tincidunt, nisl eget aliquam tincidunt,
+                nisl elit aliquam tortor, eget aliquam nisl elit non nisl.
+              </p>
+              <a
+                href="/docs/get-started/installation"
+                class="inline-block rounded bg-green-700 px-4 py-2 text-lg font-bold text-white hover:bg-green-800"
+              >
+                INSTALL
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mx-auto max-w-6xl dark:text-white md:flex md:flex-wrap md:py-32">
+      <a
+        href="/docs/get-started/introduction"
+        class="mx-auto my-4 block w-fit rounded bg-green-700 px-8 py-2 text-center text-lg font-bold text-white hover:bg-green-800"
+      >
+        GET STARTED
+      </a>
+    </div>
+  </main>
 </Layout>
-
-<style>
-	main {
-		margin: auto;
-		padding: 1.5rem;
-		max-width: 60ch;
-	}
-	h1 {
-		font-size: 3rem;
-		font-weight: 800;
-		margin: 0;
-	}
-	.text-gradient {
-		background-image: var(--accent-gradient);
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-		background-size: 400%;
-		background-position: 0%;
-	}
-	.instructions {
-		line-height: 1.6;
-		margin: 1rem 0;
-		border: 1px solid rgba(var(--accent), 25%);
-		background-color: white;
-		padding: 1rem;
-		border-radius: 0.4rem;
-	}
-	.instructions code {
-		font-size: 0.875em;
-		font-weight: bold;
-		background: rgba(var(--accent), 12%);
-		color: rgb(var(--accent));
-		border-radius: 4px;
-		padding: 0.3em 0.45em;
-	}
-	.instructions strong {
-		color: rgb(var(--accent));
-	}
-	.link-card-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(24ch, 1fr));
-		gap: 1rem;
-		padding: 0;
-	}
-</style>

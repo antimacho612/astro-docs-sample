@@ -1,0 +1,167 @@
+---
+import type { MarkdownHeading } from "astro";
+import { getCollection } from "astro:content";
+import { Icon } from "astro-iconify";
+import Base from "./Base.astro";
+import { SIDEBAR_ITEMS } from "../site_config";
+
+export interface Props {
+  /** Title of the page */
+  title?: string;
+  headings: MarkdownHeading[];
+}
+
+const docs = await getCollection("docs");
+
+const { title, headings } = Astro.props;
+---
+
+<Base title={title}>
+  <main class="grid min-h-screen grid-cols-12">
+    <aside
+      id="docs_nav"
+      class="order-1 col-span-3 hidden bg-zinc-100 dark:bg-zinc-900 max-md:fixed md:-order-1 md:block"
+      data-pagefind-ignore
+    >
+      <div
+        class="fixed top-0 h-screen w-5/6 overflow-y-auto overflow-x-hidden border-r-2 border-zinc-200 pr-16 pt-16 dark:border-zinc-700 max-md:bg-zinc-100 dark:max-md:bg-zinc-900 md:w-1/4"
+      >
+        <button id="close" class="float-right md:hidden" aria-label="Close navigation">
+          <Icon name="mdi:close" class="-mr-8 mt-4 h-8 w-8 dark:text-white" />
+        </button>
+        <div class="w-full px-8 max-md:py-4 md:float-right md:px-4">
+          {
+            Object.keys(SIDEBAR_ITEMS).map((section) => {
+              return (
+                <>
+                  <h2 class="mt-8 px-4 py-2 text-lg font-bold dark:text-zinc-100">{section}</h2>
+                  {SIDEBAR_ITEMS[section as keyof typeof SIDEBAR_ITEMS].map((path) => (
+                    <a
+                      href={path}
+                      class={`relative block px-4 py-2 text-zinc-600 transition-colors hover:text-green-600 dark:text-zinc-400 dark:hover:text-zinc-300
+                    ${
+                      Astro.url.pathname === path &&
+                      'after:absolute after:right-[-5.4rem] after:top-4 after:hidden after:h-3 after:w-3 after:rotate-45 after:bg-zinc-200 after:content-[""] dark:!text-white dark:after:bg-zinc-700 md:after:block'
+                    }`}
+                    >
+                      {docs.find((doc) => path.endsWith(doc.slug))?.data.title}
+                    </a>
+                  ))}
+                </>
+              );
+            })
+          }
+        </div>
+      </div>
+      <script>
+        const open = document.querySelector("#open");
+        open.addEventListener("click", () => {
+          document.querySelector("#docs_nav").classList.remove("hidden");
+        });
+
+        const close = document.querySelector("#close");
+        close.addEventListener("click", () => {
+          document.querySelector("#docs_nav").classList.add("hidden");
+        });
+      </script>
+    </aside>
+
+    <div class="col-span-12 dark:bg-zinc-800 md:col-span-6">
+      <article class="prose prose-sky mx-auto max-w-2xl px-8 pb-16 dark:prose-invert">
+        <button
+          id="open"
+          class="mt-4 h-10 w-10 rounded-lg border-2 bg-zinc-100 pl-0.5 dark:border-zinc-700 dark:bg-zinc-900 md:hidden"
+          aria-label="Navigate docs"
+        >
+          <Icon name="mdi:menu" class="h-8 w-8 text-zinc-500 dark:text-white" />
+        </button>
+        <h1 class="my-8">{title}</h1>
+        <slot />
+      </article>
+    </div>
+
+    <aside class="relative col-span-3 hidden dark:bg-zinc-800 md:block" data-pagefind-ignore>
+      <div id="_anchor" class="fixed top-0 px-4 py-24">
+        <h1 class="my-4 text-xl dark:text-white">On This Page</h1>
+        {
+          headings.map((heading) => {
+            let Heading: any = `h${heading.depth}`;
+            let className = `peer border-l-2 border-l-zinc-400 dark:border-l-zinc-700 `;
+            switch (heading.depth) {
+              case 2:
+                className += `pl-2`;
+                break;
+              case 3:
+                className += `pl-4`;
+                break;
+              case 4:
+                className += `pl-6`;
+                break;
+              case 5:
+                className += `pl-8`;
+                break;
+              case 6:
+                className += `pl-10`;
+                break;
+              default:
+                break;
+            }
+            return (
+              <Heading class={className}>
+                <a
+                  href={`#${heading.slug}`}
+                  class="block py-1 text-zinc-600 transition-colors hover:text-green-600 dark:text-zinc-400 dark:hover:text-zinc-300"
+                >
+                  {heading.text}
+                </a>
+              </Heading>
+            );
+          })
+        }
+        <span
+          id="_hover"
+          class="display absolute h-8 -translate-y-40 border-l-2 border-transparent transition-all peer-hover:border-l-green-600 dark:peer-hover:border-l-zinc-400"
+          aria-hidden="true"></span>
+        <span
+          id="_active"
+          class="display absolute hidden h-8 -translate-y-40 border-l-2 border-transparent border-l-black transition-all dark:border-l-white"
+          aria-hidden="true"></span>
+        <script>
+          const headings = document.querySelectorAll("#_anchor h2, #_anchor h3, #_anchor h4, #_anchor h5, #_anchor h6");
+          const hover = document.getElementById("_hover");
+          const active = document.getElementById("_active");
+          headings.forEach((heading, i) => {
+            heading.addEventListener("mouseenter", () => {
+              hover.style.transform = `translateY(${(i - headings.length) * 32}px)`;
+            });
+          });
+
+          function select(ev) {
+            const hash = window.location.hash;
+            if (hash) {
+              const heading = document.querySelector(`#_anchor [href="${hash}"]`).parentElement;
+              if (heading) {
+                active.style.display = "block";
+                active.style.transform = `translateY(${
+                  (Array.from(headings).indexOf(heading) - headings.length) * 32
+                }px)`;
+                heading.firstElementChild.classList.add("dark:!text-white", "!text-black", "font-bold");
+                console.log(heading.firstElementChild);
+              }
+              const oldHeading = document.querySelector(
+                `#_anchor [href="${new URL(ev?.oldURL ?? "https://example.com").hash}"]`
+              );
+              if (oldHeading) {
+                oldHeading.classList.remove("dark:!text-white", "!text-black", "font-bold");
+              }
+            } else {
+              active.style.display = "none";
+            }
+          }
+          window.addEventListener("hashchange", select);
+          window.addEventListener("DOMContentLoaded", select);
+        </script>
+      </div>
+    </aside>
+  </main>
+</Base>

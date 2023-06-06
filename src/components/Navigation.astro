@@ -1,0 +1,85 @@
+---
+import { Icon } from "astro-iconify";
+---
+
+<nav
+  class="sticky top-0 z-50 space-x-4 border-b-2 border-zinc-300 bg-white px-8 py-3 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 md:px-16"
+>
+  <a href="/" aria-label="Home" class="h-6 w-6">
+    <img src="/favicon.svg" alt="logo" class="inline-block h-8 w-8 transition-all" />
+    <span class="align-middle text-lg font-bold text-green-700 dark:text-white">Manual</span>
+  </a>
+  <span class="float-right space-x-2 md:float-none">
+    <a href="/blog" class="align-middle font-bold hover:text-green-700 hover:dark:text-white">Blog</a>
+    <a href="/docs/get-started/introduction" class="align-middle font-bold hover:text-green-700 hover:dark:text-white"
+      >Docs</a
+    >
+    <button id="mobile-search" aria-label="Search">
+      <Icon
+        name="mdi:search"
+        class="mt-1 inline-block h-6 w-6 peer-focus:text-green-700 dark:text-zinc-300 peer-focus:dark:text-zinc-100 md:hidden"
+      />
+    </button>
+  </span>
+  <span
+    class="hidden flex-row-reverse px-2 py-2 max-md:absolute max-md:left-0 max-md:!mx-[5%] max-md:mt-8 max-md:w-[90%] max-md:rounded-lg max-md:bg-zinc-200 max-md:shadow dark:max-md:bg-black md:float-right md:flex md:space-x-4 md:py-1"
+  >
+    <Icon
+      name="mdi:close"
+      id="mobile-search-close"
+      class="h-8 w-8 cursor-pointer text-zinc-600 peer-focus:text-green-700 dark:text-zinc-400 peer-focus:dark:text-zinc-100 md:mr-1 md:hidden md:h-6 md:w-6"
+    />
+    <input
+      id="search"
+      type="text"
+      class="peer w-full rounded-full bg-transparent focus:outline-none max-md:text-lg md:w-60"
+      placeholder="Search..."
+    />
+    <Icon
+      name="mdi:search"
+      class="h-8 w-8 text-zinc-600 peer-focus:text-green-700 dark:text-zinc-400 peer-focus:dark:text-zinc-100 md:mr-1 md:h-6 md:w-6"
+    />
+    <div
+      id="results"
+      class="absolute top-16 max-h-96 w-full overflow-y-auto rounded-lg border-2 border-zinc-300 bg-zinc-200 empty:hidden focus:block peer-placeholder-shown:hidden dark:border-zinc-700 dark:bg-zinc-800 max-md:-mr-2 md:max-h-72 md:w-72"
+    >
+    </div>
+  </span>
+</nav>
+
+<script is:inline>
+  document.querySelector("#mobile-search")?.addEventListener("click", () => {
+    document.querySelector("#search")?.parentElement.classList.toggle("hidden");
+    document.querySelector("#search")?.parentElement.classList.toggle("flex");
+  });
+
+  document.querySelector("#mobile-search-close")?.addEventListener("click", () => {
+    document.querySelector("#search")?.parentElement.classList.add("hidden");
+    document.querySelector("#search")?.parentElement.classList.remove("flex");
+  });
+
+  document.querySelector("#search")?.addEventListener("input", async (e) => {
+    // only load the pagefind script once
+    if (e.target.dataset.loaded !== "true") {
+      e.target.dataset.loaded = "true";
+      // load the pagefind script
+      window.pagefind = await import("/pagefind/pagefind.js");
+    }
+
+    // search the index using the input value
+    const search = await window.pagefind.search(e.target.value);
+
+    // clear the old results
+    document.querySelector("#results").innerHTML = "";
+
+    // add the new results
+    for (const result of search.results) {
+      const data = await result.data();
+      document.querySelector("#results").innerHTML += `
+        <a href="${data.url}" class="block px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-700">
+          <h3 class="font-bold">${data.meta.title}</h3>
+          <p>${data.excerpt}</p>
+        </a>`;
+    }
+  });
+</script>
